@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>BG ZONE</title>
+<style>
+:root{--bg:#0a0e1a;--card:#131a2e;--card2:#1a2340;--line:#243056;--tx:#eef2ff;--mut:#8b97bd;--pri:#ff7a1a;--pri2:#ff3d54;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;--blue:#38bdf8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Bengali",sans-serif;font-size:15px}
+body{max-width:520px;margin:0 auto;min-height:100vh}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+.muted{color:var(--mut)}.sm{font-size:12.5px}.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}
+.empty{text-align:center;color:var(--mut);padding:22px 10px}
+/* auth */
+#auth{padding:28px 18px}
+.logo{font-size:34px;font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero{text-align:center;margin:18px 0 22px}
+.hero p{margin:4px 0 0;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+label.fl{display:block;margin:10px 0 5px;color:var(--mut);font-size:13px}
+.inp{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;outline:none}
+.inp:focus{border-color:var(--pri)}
+.btn{border:1px solid var(--line);background:var(--card2);padding:11px 16px;border-radius:12px;font-weight:700;cursor:pointer}
+.btn.pri{background:linear-gradient(90deg,var(--pri),var(--pri2));border:0;color:#fff}
+.btn.ok{background:rgba(34,197,94,.15);border-color:var(--ok);color:var(--ok)}
+.btn.bad{background:rgba(239,68,68,.15);border-color:var(--bad);color:var(--bad)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn.block{display:block;width:100%;margin-top:14px}
+.btn:disabled{opacity:.6;cursor:default}
+.link{color:var(--blue);cursor:pointer;text-align:center;margin-top:14px;font-size:14px}
+/* header & nav */
+.hdr{position:sticky;top:0;z-index:20;background:rgba(10,14,26,.95);backdrop-filter:blur(8px);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.hdr .logo{font-size:22px}
+.wchip{background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-weight:800;cursor:pointer}
+.page{display:none;padding:12px 12px 90px}.page.on{display:block}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#0d1224;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{background:none;border:0;padding:9px 0 8px;color:var(--mut);font-size:11.5px;cursor:pointer}
+nav button span{display:block;font-size:21px;margin-bottom:1px}
+nav button.on{color:var(--pri)}
+/* notice */
+.notice{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:10px;overflow:hidden}
+.mq{overflow:hidden;white-space:nowrap;flex:1}
+.mq span{display:inline-block;padding-left:100%;animation:mq 16s linear infinite}
+@keyframes mq{to{transform:translateX(-100%)}}
+/* slider */
+.slider{position:relative;aspect-ratio:16/8;border-radius:16px;overflow:hidden;background:#000;margin-bottom:14px;border:1px solid var(--line)}
+.sl{position:absolute;inset:0;opacity:0;transform:scale(1.05);transition:opacity .8s ease,transform .8s ease;pointer-events:none;background:linear-gradient(135deg,#1a2340,#0d1224)}
+.sl.on{opacity:1;transform:scale(1);z-index:1;pointer-events:auto}
+.sl img,.sl video,.sl iframe,.sl .media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-weight:700;z-index:2;pointer-events:none}
+.dots{position:absolute;bottom:8px;right:10px;z-index:3;display:flex;gap:5px}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);transition:.3s}
+.dots i.on{background:var(--pri);width:18px;border-radius:5px}
+/* sections */
+.sec{display:flex;justify-content:space-between;align-items:center;margin:16px 2px 10px}
+.sec b{font-size:17px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mode{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;text-align:center;cursor:pointer;transition:.15s}
+.mode:active{transform:scale(.96)}
+.mode img,.mode .ico{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:38px;background:linear-gradient(135deg,var(--card2),#0f1630);margin-bottom:6px}
+.mode b{display:block;font-size:13.5px}.mode small{color:var(--mut);font-size:11.5px}
+/* match card */
+.mc{cursor:pointer}
+.mt{font-size:16px}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--card2);border:1px solid var(--line)}
+.badge.mode{color:var(--blue)}.badge.live{color:var(--bad);border-color:var(--bad)}.badge.finished{color:var(--ok)}.badge.cancelled{color:var(--warn)}
+.badge.pending{color:var(--warn);border-color:var(--warn)}.badge.approved{color:var(--ok);border-color:var(--ok)}.badge.rejected{color:var(--bad);border-color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.stats div{background:var(--card2);border-radius:10px;padding:8px;text-align:center}
+.stats small{display:block;color:var(--mut);font-size:11px}.stats b{font-size:14.5px}
+.bar{height:6px;background:var(--card2);border-radius:4px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2))}
+/* chips / tabs */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--mut);cursor:pointer;font-size:13.5px;font-weight:600}
+.chip.on{background:linear-gradient(90deg,var(--pri),var(--pri2));color:#fff;border-color:transparent}
+.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.tabs button{background:none;border:0;padding:9px 4px;border-radius:9px;color:var(--mut);font-weight:700;font-size:13.5px;cursor:pointer}
+.tabs button.on{background:var(--card2);color:var(--pri)}
+/* wallet */
+.bal{background:linear-gradient(135deg,#ff7a1a,#ff3d54);border:0;text-align:center;padding:20px}
+.bal small{opacity:.9}.bal h1{margin:4px 0 0;font-size:34px}
+.pay{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.tx{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.tx:last-child{border:0}
+.tx .ic{width:38px;height:38px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.tx .mid{flex:1;min-width:0}.tx .mid div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plus{color:var(--ok);font-weight:800}.minus{color:var(--bad);font-weight:800}
+/* profile */
+.avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--pri2));display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;margin:0 auto 8px}
+.menu{display:flex;justify-content:space-between;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.menu:last-child{border:0}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);border:1px solid var(--line);border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:16px 14px 24px}
+.sheet h3{margin:0 0 10px}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border:0}
+.pre{white-space:pre-wrap;line-height:1.55}
+.room{background:var(--card2);border:1px dashed var(--pri);border-radius:12px;padding:12px;margin:10px 0}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1f2a4d;border:1px solid var(--line);padding:10px 16px;border-radius:12px;z-index:200;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:.25s}
+#toast.show{opacity:1}#toast.bad{border-color:var(--bad)}
+#banned{position:fixed;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ============ AUTH ============ -->
+<div id="auth">
+  <div class="hero"><div class="logo">BG ZONE</div><p>Free Fire টুর্নামেন্ট প্ল্যাটফর্ম</p></div>
+
+  <div id="fLogin" class="card">
+    <label class="fl">ইমেইল</label><input id="lEmail" class="inp" type="email" autocomplete="email" placeholder="example@gmail.com">
+    <label class="fl">পাসওয়ার্ড</label><input id="lPass" class="inp" type="password" autocomplete="current-password" placeholder="••••••">
+    <button class="btn pri block" onclick="doLogin()">লগইন</button>
+    <div class="link" onclick="doForgot()">পাসওয়ার্ড ভুলে গেছেন?</div>
+    <div class="link" onclick="authMode('reg')">নতুন অ্যাকাউন্ট খুলুন</div>
+  </div>
+
+  <div id="fReg" class="card" hidden>
+    <label class="fl">আপনার নাম</label><input id="rName" class="inp" maxlength="40">
+    <label class="fl">ইমেইল</label><input id="rEmail" class="inp" type="email" autocomplete="email">
+    <label class="fl">মোবাইল নম্বর</label><input id="rPhone" class="inp" type="tel" maxlength="11" placeholder="01XXXXXXXXX">
+    <label class="fl">Free Fire ইন-গেম নাম</label><input id="rFfName" class="inp" maxlength="40">
+    <label class="fl">Free Fire UID</label><input id="rFfUid" class="inp" inputmode="numeric" maxlength="20">
+    <label class="fl">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label><input id="rPass" class="inp" type="password" autocomplete="new-password">
+    <label class="fl" style="display:flex;gap:8px;align-items:flex-start;margin-top:14px"><input id="rAge" type="checkbox" style="margin-top:3px"> আমার বয়স ১৮ বছর বা তার বেশি এবং আমি নিয়ম ও শর্তাবলীতে সম্মত।</label>
+    <button class="btn pri block" onclick="doReg()">অ্যাকাউন্ট খুলুন</button>
+    <div class="link" onclick="authMode('login')">আগে থেকেই অ্যাকাউন্ট আছে? লগইন</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" hidden>
+  <div class="hdr">
+    <div class="logo">BG ZONE</div>
+    <div class="wchip" onclick="go('wallet')">💰 <span id="hdrBal">৳0</span></div>
+  </div>
+
+  <!-- HOME -->
+  <section class="page on" id="p-home">
+    <div class="notice" id="notice" hidden>📢<div class="mq"><span id="noticeTx"></span></div></div>
+    <div class="slider" id="slider"></div>
+
+    <div class="sec"><b>🎮 গেম মোড</b></div>
+    <div class="grid3" id="catGrid"></div>
+
+    <div class="sec"><b>🔥 আসন্ন ম্যাচ</b><span class="muted sm" style="cursor:pointer" onclick="go('match')">সব দেখুন ›</span></div>
+    <div id="homeMatches"></div>
+  </section>
+
+  <!-- MATCH -->
+  <section class="page" id="p-match">
+    <div class="tabs" id="mTabs"></div>
+    <div class="chips" id="mCats"></div>
+    <div class="chips" id="mModes"></div>
+    <div id="mList"></div>
+  </section>
+
+  <!-- WALLET -->
+  <section class="page" id="p-wallet">
+    <div class="card bal"><small>বর্তমান ব্যালেন্স</small><h1 id="wBal">৳0</h1></div>
+    <div class="tabs" id="wTabs"></div>
+    <div id="wBody"></div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="page" id="p-profile"><div id="pBody"></div></section>
+
+  <nav>
+    <button data-p="home" class="on" onclick="go('home')"><span>🏠</span>হোম</button>
+    <button data-p="match" onclick="go('match')"><span>🎯</span>ম্যাচ</button>
+    <button data-p="wallet" onclick="go('wallet')"><span>👛</span>ওয়ালেট</button>
+    <button data-p="profile" onclick="go('profile')"><span>👤</span>প্রোফাইল</button>
+  </nav>
+</div>
+
+<div id="banned" hidden>
+  <div style="font-size:60px">🚫</div>
+  <h2>আপনার অ্যাকাউন্ট ব্যান করা হয়েছে</h2>
+  <p class="muted">বিস্তারিত জানতে সাপোর্টে যোগাযোগ করুন।</p>
+  <button class="btn" onclick="auth.signOut()">লগআউট</button>
+</div>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC23jIghtQ8WwfkayL41HZRHVO04SxFj84",
+  authDomain: "bg-zone-dbfb9.firebaseapp.com",
+  projectId: "bg-zone-dbfb9",
+  storageBucket: "bg-zone-dbfb9.firebasestorage.app",
+  messagingSenderId: "584576271168",
+  appId: "1:584576271168:web:0ff8b2b16fffa90b3470a5"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(), db = firebase.firestore();
+const FV = firebase.firestore.FieldValue;
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tk = n => '৳' + (Number(n) || 0).toLocaleString('en-US');
+const tsMs = t => t && t.toMillis ? t.toMillis() : (t ? new Date(t).getTime() : 0);
+const fmtDT = t => { const m = tsMs(t); if (!m) return '-'; return new Date(m).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true}); };
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+let toastT;
+function toast(m, bad) { const t = $('#toast'); t.textContent = m; t.className = 'show' + (bad ? ' bad' : ''); clearTimeout(toastT); toastT = setTimeout(() => t.className = '', 2800); }
+function openModal(h) { $('#sheet').innerHTML = h; $('#modal').hidden = false; }
+function closeModal() { $('#modal').hidden = true; $('#sheet').innerHTML = ''; }
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+function copyTx(t) { try { navigator.clipboard.writeText(t); } catch (e) { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); } toast('কপি হয়েছে: ' + t); }
+function authErr(e) {
+  const m = {
+    'auth/invalid-credential': 'ইমেইল বা পাসওয়ার্ড ভুল', 'auth/wrong-password': 'পাসওয়ার্ড ভুল', 'auth/user-not-found': 'এই ইমেইলে অ্যাকাউন্ট নেই',
+    'auth/email-already-in-use': 'এই ইমেইল আগেই ব্যবহার হয়েছে', 'auth/weak-password': 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর দিন',
+    'auth/invalid-email': 'ইমেইল সঠিক নয়', 'auth/too-many-requests': 'অনেকবার চেষ্টা হয়েছে, একটু পরে আবার দিন',
+    'auth/network-request-failed': 'ইন্টারনেট সংযোগ পরীক্ষা করুন', 'auth/unauthorized-domain': 'এই ডোমেইন Firebase এ অনুমোদিত নয় (Authorized domains এ যোগ করুন)'
+  };
+  return m[e.code] || ('সমস্যা: ' + (e.message || e.code));
+}
+
+/* ---------- state ---------- */
+let uid = null, me = null, S = {}, banners = [], cats = [], tours = [], joinedMap = {}, myJoined = [], myTx = [], unsubs = [], regBusy = false, joining = false;
+let fCat = 'all', fMode = 'all', mTab = 'upcoming', wTab = 'add';
+
+/* ---------- auth ---------- */
+function authMode(m) { $('#fLogin').hidden = m !== 'login'; $('#fReg').hidden = m !== 'reg'; }
+async function doLogin() {
+  const e = $('#lEmail').value.trim(), p = $('#lPass').value;
+  if (!e || !p) return toast('ইমেইল ও পাসওয়ার্ড দিন', 1);
+  try { await auth.signInWithEmailAndPassword(e, p); } catch (x) { toast(authErr(x), 1); }
+}
+async function doForgot() {
+  const e = $('#lEmail').value.trim();
+  if (!e) return toast('আগে ইমেইল লিখুন, তারপর এখানে চাপুন', 1);
+  try { await auth.sendPasswordResetEmail(e); toast('পাসওয়ার্ড রিসেট লিংক ইমেইলে পাঠানো হয়েছে (স্প্যাম ফোল্ডারও দেখুন)'); } catch (x) { toast(authErr(x), 1); }
+}
+async function doReg() {
+  const name = $('#rName').value.trim(), email = $('#rEmail').value.trim(), phone = $('#rPhone').value.trim(),
+        ffName = $('#rFfName').value.trim(), ffUid = $('#rFfUid').value.trim(), pass = $('#rPass').value;
+  if (name.length < 2) return toast('নাম দিন', 1);
+  if (!/^01\d{9}$/.test(phone)) return toast('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন', 1);
+  if (!ffName) return toast('Free Fire ইন-গেম নাম দিন', 1);
+  if (!/^\d{5,20}$/.test(ffUid)) return toast('Free Fire UID (শুধু সংখ্যা) দিন', 1);
+  if (pass.length < 6) return toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর', 1);
+  if (!$('#rAge').checked) return toast('১৮+ ও শর্তে সম্মতি দিন', 1);
+  regBusy = true;
+  let cred;
+  try { cred = await auth.createUserWithEmailAndPassword(email, pass); } catch (x) { regBusy = false; return toast(authErr(x), 1); }
+  try {
+    await db.collection('users').doc(cred.user.uid).set({ name, email, phone, ffName, ffUid, walletBalance: 0, isBanned: false, createdAt: FV.serverTimestamp() });
+    toast('অ্যাকাউন্ট তৈরি হয়েছে 🎉');
+  } catch (x) {
+    toast('প্রোফাইল সেভ হয়নি, আবার লগইন করুন', 1); auth.signOut();
+  }
+  regBusy = false;
+}
+
+auth.onAuthStateChanged(u => {
+  if (!u) { stopAll(); uid = null; me = null; $('#auth').hidden = false; $('#app').hidden = true; $('#banned').hidden = true; return; }
+  uid = u.uid; startApp(u);
+});
+
+function stopAll() { unsubs.forEach(f => { try { f(); } catch (e) {} }); unsubs = []; clearTimeout(sTimer); }
+function startApp(u) {
+  stopAll();
+  $('#auth').hidden = true; $('#app').hidden = false;
+  const onErr = e => { if (e && e.code !== 'permission-denied') toast('ডাটা লোড সমস্যা: ' + e.code, 1); };
+  unsubs.push(db.collection('users').doc(uid).onSnapshot(s => {
+    if (!s.exists) {
+      if (!regBusy) db.collection('users').doc(uid).set({ name: (u.displayName || (u.email || 'Player').split('@')[0]).slice(0, 40), email: u.email || '', phone: '', ffName: '', ffUid: '', walletBalance: 0, isBanned: false, createdAt: FV.serverTimestamp() }).catch(() => {});
+      return;
+    }
+    me = s.data(); renderAll();
+  }, onErr));
+  unsubs.push(db.collection('settings').doc('app').onSnapshot(s => { S = s.exists ? s.data() : {}; renderAll(); }, onErr));
+  unsubs.push(db.collection('banners').orderBy('order').onSnapshot(s => { banners = s.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.active !== false); renderBanner(); }, onErr));
+  unsubs.push(db.collection('categories').orderBy('order').onSnapshot(s => { cats = s.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => c.active !== false); renderAll(); }, onErr));
+  unsubs.push(db.collection('tournaments').orderBy('startTime', 'desc').limit(150).onSnapshot(s => { tours = s.docs.map(d => ({ id: d.id, ...d.data() })); renderAll(); }, onErr));
+  unsubs.push(db.collection('joined').where('userId', '==', uid).onSnapshot(s => {
+    myJoined = s.docs.map(d => d.data({ serverTimestamps: 'estimate' })); joinedMap = {}; myJoined.forEach(j => joinedMap[j.tournamentId] = j); renderAll();
+  }, onErr));
+  unsubs.push(db.collection('transactions').where('userId', '==', uid).onSnapshot(s => {
+    myTx = s.docs.map(d => ({ id: d.id, ...d.data({ serverTimestamps: 'estimate' }) })).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt)); renderAll();
+  }, onErr));
+}
+
+function go(p) {
+  $$('.page').forEach(e => e.classList.toggle('on', e.id === 'p-' + p));
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  window.scrollTo(0, 0);
+}
+
+function renderAll() {
+  if (!me) return;
+  $('#banned').hidden = !me.isBanned;
+  $('#hdrBal').textContent = tk(me.walletBalance);
+  renderNotice(); renderCats(); renderHomeMatches(); renderMatch(); renderWallet(); renderProfile();
+}
+
+/* ---------- HOME : banner slider ---------- */
+let sIdx = 0, sTimer = null;
+function ytId(u) { const m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/); return m ? m[1] : null; }
+function mediaHtml(b) {
+  const v = safeUrl((b.videoUrl || '').trim());
+  if (!v) return '';
+  const y = ytId(v);
+  if (y) return `<iframe src="https://www.youtube.com/embed/${y}?autoplay=1&mute=1&loop=1&playlist=${y}&controls=0&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  if (/facebook\.com|fb\.watch/.test(v)) return `<iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(v)}&show_text=false&autoplay=true&mute=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  return `<video src="${esc(v)}" autoplay muted loop playsinline></video>`;
+}
+function renderBanner() {
+  const el = $('#slider'); clearTimeout(sTimer);
+  if (!banners.length) { el.innerHTML = '<div class="empty" style="padding-top:12%">BG ZONE এ স্বাগতম 🎮</div>'; return; }
+  el.innerHTML = banners.map((b, i) => `<div class="sl" id="sl${i}">${b.imageUrl ? `<img src="${esc(safeUrl(b.imageUrl))}" alt="">` : ''}<div class="media"></div>${b.title ? `<div class="cap">${esc(b.title)}</div>` : ''}</div>`).join('') +
+    `<div class="dots">${banners.map((_, i) => `<i id="dt${i}"></i>`).join('')}</div>`;
+  if (sIdx >= banners.length) sIdx = 0;
+  setSlide(sIdx);
+}
+function setSlide(i) {
+  clearTimeout(sTimer);
+  if (!banners.length) return;
+  sIdx = (i + banners.length) % banners.length;
+  banners.forEach((b, k) => {
+    const s = $('#sl' + k), d = $('#dt' + k); if (!s) return;
+    const on = k === sIdx;
+    s.classList.toggle('on', on); if (d) d.classList.toggle('on', on);
+    if (b.videoUrl) { const m = s.querySelector('.media'); m.innerHTML = on ? mediaHtml(b) : ''; }
+  });
+  if (banners.length > 1) {
+    const cur = banners[sIdx];
+    sTimer = setTimeout(() => setSlide(sIdx + 1), cur.videoUrl ? (Number(cur.duration) || 15) * 1000 : 4500);
+  }
+}
+(function () {
+  const el = $('#slider'); let x0 = null;
+  el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) setSlide(sIdx + (dx < 0 ? 1 : -1)); x0 = null; });
+  el.addEventListener('click', () => { const b = banners[sIdx]; if (b && b.link && !b.videoUrl && safeUrl(b.link)) window.open(b.link, '_blank'); });
+})();
+
+function renderNotice() { $('#notice').hidden = !S.notice; $('#noticeTx').textContent = S.notice || ''; }
+
+function renderCats() {
+  const g = $('#catGrid');
+  if (!cats.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1">এখনো কোনো গেম মোড যোগ করা হয়নি</div>'; return; }
+  g.innerHTML = cats.map(c => {
+    const n = tours.filter(t => t.categoryId === c.id && (t.status === 'upcoming' || t.status === 'live')).length;
+    return `<div class="mode" onclick="openCat('${c.id}')">${c.imageUrl ? `<img src="${esc(safeUrl(c.imageUrl))}" alt="">` : `<div class="ico">${esc(c.emoji || '🎮')}</div>`}<b>${esc(c.name)}</b><small>${n} ম্যাচ</small></div>`;
+  }).join('');
+}
+function openCat(id) { fCat = id; fMode = 'all'; mTab = 'upcoming'; go('match'); renderMatch(); }
+
+function renderHomeMatches() {
+  const l = tours.filter(t => t.status === 'upcoming' || t.status === 'live').sort((a, b) => tsMs(a.startTime) - tsMs(b.startTime)).slice(0, 5);
+  $('#homeMatches').innerHTML = l.length ? l.map(matchCard).join('') : '<div class="empty">এখন কোনো ম্যাচ নেই</div>';
+}
+
+/* ---------- MATCH ---------- */
+function matchCard(t) {
+  const j = !!joinedMap[t.id], left = (t.maxSlots || 0) - (t.joinedCount || 0), pct = t.maxSlots ? Math.min(100, (t.joinedCount || 0) * 100 / t.maxSlots) : 0;
+  let act = '';
+  if (t.status === 'upcoming') {
+    act = j ? '<button class="btn ok sm" disabled>✓ জয়েন করা</button>'
+      : left <= 0 ? '<button class="btn sm" disabled>ফুল</button>'
+      : `<button class="btn pri sm" onclick="startJoin('${t.id}')">জয়েন • ${t.entryFee > 0 ? tk(t.entryFee) : 'ফ্রি'}</button>`;
+  } else {
+    act = `<span class="badge ${esc(t.status)}">${{ live: '● LIVE', finished: 'শেষ', cancelled: 'বাতিল' }[t.status] || esc(t.status)}</span>`;
+  }
+  return `<div class="card mc" onclick="openMatch('${t.id}')">
+    <div class="row between"><b class="mt">${esc(t.title)}</b><span class="badge mode">${esc(t.mode || '')}</span></div>
+    <div class="muted sm" style="margin-top:3px">${esc(t.categoryName || '')}${t.map ? ' • ' + esc(t.map) : ''} • ⏰ ${fmtDT(t.startTime)}</div>
+    <div class="stats"><div><small>এন্ট্রি ফি</small><b>${t.entryFee > 0 ? tk(t.entryFee) : 'ফ্রি'}</b></div><div><small>প্রাইজ পুল</small><b>${tk(t.prizePool)}</b></div><div><small>পার কিল</small><b>${tk(t.perKill)}</b></div></div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="row between"><small class="muted">${t.joinedCount || 0}/${t.maxSlots || 0} জয়েন</small><div onclick="event.stopPropagation()">${act}</div></div>
+  </div>`;
+}
+function modesList() {
+  const fromS = (S.modes || '').split(',').map(x => x.trim()).filter(Boolean);
+  const fromT = [...new Set(tours.map(t => t.mode).filter(Boolean))];
+  return [...new Set([...fromS, ...fromT])];
+}
+function tList() {
+  let l = tours.slice();
+  if (mTab === 'mine') l = l.filter(t => joinedMap[t.id]);
+  else if (mTab === 'results') l = l.filter(t => t.status === 'finished');
+  else l = l.filter(t => t.status === mTab);
+  if (fCat !== 'all') l = l.filter(t => t.categoryId === fCat);
+  if (fMode !== 'all') l = l.filter(t => t.mode === fMode);
+  l.sort((a, b) => mTab === 'upcoming' ? tsMs(a.startTime) - tsMs(b.startTime) : tsMs(b.startTime) - tsMs(a.startTime));
+  return l;
+}
+function renderMatch() {
+  const tabs = [['upcoming', 'আসন্ন'], ['live', 'লাইভ'], ['results', 'রেজাল্ট'], ['mine', 'আমার ম্যাচ']];
+  $('#mTabs').innerHTML = tabs.map(([k, v]) => `<button class="${mTab === k ? 'on' : ''}" onclick="mTab='${k}';renderMatch()">${v}</button>`).join('');
+  $('#mCats').innerHTML = `<div class="chip ${fCat === 'all' ? 'on' : ''}" onclick="fCat='all';renderMatch()">সব গেম</div>` + cats.map(c => `<div class="chip ${fCat === c.id ? 'on' : ''}" onclick="fCat='${c.id}';renderMatch()">${esc(c.emoji || '')} ${esc(c.name)}</div>`).join('');
+  const ms = modesList();
+  $('#mModes').innerHTML = ms.length ? `<div class="chip ${fMode === 'all' ? 'on' : ''}" onclick="fMode='all';renderMatch()">সব মোড</div>` + ms.map((m, i) => `<div class="chip ${fMode === m ? 'on' : ''}" data-m="${esc(m)}" onclick="setMode(this)">${esc(m)}</div>`).join('') : '';
+  const l = tList();
+  $('#mList').innerHTML = l.length ? l.map(matchCard).join('') : '<div class="empty">কোনো ম্যাচ পাওয়া যায়নি</div>';
+}
+function setMode(el) { fMode = el.dataset.m; renderMatch(); }
+
+async function openMatch(id) {
+  const t = tours.find(x => x.id === id); if (!t) return;
+  openModal('<div class="empty">লোড হচ্ছে...</div>');
+  let room = null, parts = [];
+  try { const ps = await db.collection('joined').where('tournamentId', '==', id).get(); parts = ps.docs.map(d => d.data()); } catch (e) {}
+  const j = !!joinedMap[id];
+  if (j) { try { const r = await db.collection('rooms').doc(id).get(); if (r.exists) room = r.data(); } catch (e) {} }
+  let roomHtml = '';
+  if (t.status === 'upcoming' || t.status === 'live') {
+    if (j) roomHtml = (room && room.roomId) ? `<div class="room"><div class="row between"><span>Room ID: <b>${esc(room.roomId)}</b></span><button class="btn sm" onclick="copyTx('${esc(room.roomId)}')">কপি</button></div>
+        <div class="row between" style="margin-top:8px"><span>Password: <b>${esc(room.roomPass || '-')}</b></span><button class="btn sm" onclick="copyTx('${esc(room.roomPass || '')}')">কপি</button></div></div>`
+        : '<div class="room muted sm">রুম ID ও পাসওয়ার্ড ম্যাচ শুরুর কিছুক্ষণ আগে এখানে দেখানো হবে।</div>';
+    else roomHtml = '<div class="room muted sm">🔒 জয়েন করলে রুম ID ও পাসওয়ার্ড এখানে দেখতে পাবেন।</div>';
+  }
+  let partHtml;
+  if (t.status === 'finished') {
+    const sorted = parts.slice().sort((a, b) => (a.rank || 999) - (b.rank || 999) || (b.kills || 0) - (a.kills || 0));
+    partHtml = `<h4 style="margin:14px 0 6px">🏆 রেজাল্ট</h4>` + (sorted.length ? sorted.map(p => `<div class="kv"><span>${p.rank ? '#' + p.rank + ' ' : ''}${esc(p.ffName)} <small class="muted">(${p.kills || 0} কিল)</small></span><b class="plus">${p.prize ? tk(p.prize) : '-'}</b></div>`).join('') : '<div class="muted sm">কোনো তথ্য নেই</div>');
+  } else {
+    partHtml = `<h4 style="margin:14px 0 6px">👥 জয়েন করেছে (${parts.length})</h4>` + (parts.length ? parts.map((p, i) => `<div class="kv"><span>${i + 1}. ${esc(p.ffName)}${p.team && p.team.length ? ' <small class="muted">+ ' + p.team.map(esc).join(', ') + '</small>' : ''}</span></div>`).join('') : '<div class="muted sm">এখনো কেউ জয়েন করেনি</div>');
+  }
+  const canJoin = t.status === 'upcoming' && !j && (t.joinedCount || 0) < (t.maxSlots || 0);
+  openModal(`<h3>${esc(t.title)}</h3>
+    <div class="muted sm">${esc(t.categoryName || '')} • ${esc(t.mode || '')}${t.map ? ' • ' + esc(t.map) : ''}</div>
+    <div class="stats"><div><small>এন্ট্রি ফি</small><b>${t.entryFee > 0 ? tk(t.entryFee) : 'ফ্রি'}</b></div><div><small>প্রাইজ পুল</small><b>${tk(t.prizePool)}</b></div><div><small>পার কিল</small><b>${tk(t.perKill)}</b></div></div>
+    <div class="kv"><span class="muted">শুরুর সময়</span><b>${fmtDT(t.startTime)}</b></div>
+    <div class="kv"><span class="muted">স্লট</span><b>${t.joinedCount || 0}/${t.maxSlots || 0}</b></div>
+    ${roomHtml}
+    ${t.description ? `<h4 style="margin:14px 0 6px">📜 বিস্তারিত ও নিয়ম</h4><div class="pre sm">${esc(t.description)}</div>` : ''}
+    ${partHtml}
+    ${canJoin ? `<button class="btn pri block" onclick="startJoin('${id}')">জয়েন করুন • ${t.entryFee > 0 ? tk(t.entryFee) : 'ফ্রি'}</button>` : ''}
+    <button class="btn block" onclick="closeModal()">বন্ধ করুন</button>`);
+}
+
+function startJoin(id) {
+  const t = tours.find(x => x.id === id); if (!t) return;
+  if (me.isBanned) return toast('আপনার অ্যাকাউন্ট ব্যান', 1);
+  if (t.status !== 'upcoming') return toast('এই ম্যাচে এখন জয়েন করা যাবে না', 1);
+  if (joinedMap[id]) return toast('আপনি আগেই জয়েন করেছেন');
+  if ((t.joinedCount || 0) >= (t.maxSlots || 0)) return toast('স্লট ফুল', 1);
+  if (!me.ffName || !me.ffUid) { openModal(`<h3>প্রোফাইল সম্পূর্ণ করুন</h3><p class="muted">জয়েন করতে আগে আপনার Free Fire নাম ও UID দিন।</p><button class="btn pri block" onclick="editProfile()">প্রোফাইল এডিট</button>`); return; }
+  const fee = Number(t.entryFee) || 0, bal = Number(me.walletBalance) || 0, size = Math.max(1, Number(t.teamSize) || 1);
+  let mates = '';
+  for (let i = 1; i < size; i++) mates += `<label class="fl">টিমমেট ${i} এর Free Fire নাম / UID</label><input class="inp mate" maxlength="60">`;
+  openModal(`<h3>জয়েন নিশ্চিত করুন</h3>
+    <div class="kv"><span class="muted">ম্যাচ</span><b>${esc(t.title)}</b></div>
+    <div class="kv"><span class="muted">আপনার FF নাম</span><b>${esc(me.ffName)}</b></div>
+    <div class="kv"><span class="muted">এন্ট্রি ফি</span><b>${fee > 0 ? tk(fee) : 'ফ্রি'}</b></div>
+    <div class="kv"><span class="muted">বর্তমান ব্যালেন্স</span><b>${tk(bal)}</b></div>
+    ${fee > 0 ? `<div class="kv"><span class="muted">জয়েনের পর ব্যালেন্স</span><b>${tk(bal - fee)}</b></div>` : ''}
+    ${mates}
+    ${bal < fee ? `<p class="minus">ব্যালেন্স কম! আগে ওয়ালেটে টাকা অ্যাড করুন।</p><button class="btn pri block" onclick="closeModal();wTab='add';go('wallet');renderWallet()">টাকা অ্যাড করুন</button>`
+      : `<button class="btn pri block" id="jBtn" onclick="confirmJoin('${id}')">${fee > 0 ? tk(fee) + ' দিয়ে জয়েন করুন' : 'ফ্রি জয়েন করুন'}</button>`}
+    <button class="btn block" onclick="closeModal()">বাতিল</button>`);
+}
+async function confirmJoin(id) {
+  if (joining) return;
+  const t = tours.find(x => x.id === id); if (!t) return;
+  const team = $$('.mate').map(i => i.value.trim());
+  if (team.some(x => !x)) return toast('সব টিমমেটের তথ্য দিন', 1);
+  const fee = Number(t.entryFee) || 0;
+  joining = true; const btn = $('#jBtn'); if (btn) btn.disabled = true;
+  try {
+    const b = db.batch();
+    b.set(db.collection('joined').doc(id + '_' + uid), { userId: uid, tournamentId: id, name: me.name, ffName: me.ffName, ffUid: me.ffUid, team, joinedAt: FV.serverTimestamp() });
+    b.update(db.collection('tournaments').doc(id), { joinedCount: FV.increment(1) });
+    if (fee > 0) {
+      const txId = 'join_' + id + '_' + uid;
+      b.update(db.collection('users').doc(uid), { walletBalance: FV.increment(-fee), lastTx: txId });
+      b.set(db.collection('transactions').doc(txId), { userId: uid, type: 'join', amount: fee, status: 'approved', note: 'ম্যাচ জয়েন: ' + t.title, tournamentId: id, createdAt: FV.serverTimestamp() });
+    }
+    await b.commit();
+    closeModal(); toast('✅ জয়েন সফল! রুম ডিটেইলস ম্যাচের আগে দেখতে পাবেন');
+  } catch (e) {
+    toast('জয়েন হয়নি: স্লট ফুল / ব্যালেন্স কম / ম্যাচ বন্ধ হতে পারে', 1);
+  }
+  joining = false;
+}
+
+/* ---------- WALLET ---------- */
+const PLUS = ['deposit', 'prize', 'refund', 'bonus'];
+const TXI = { deposit: '⬇️', withdraw: '⬆️', join: '🎮', prize: '🏆', refund: '↩️', bonus: '🎁', deduct: '➖' };
+const TXN = { deposit: 'ডিপোজিট', withdraw: 'উইথড্র', join: 'ম্যাচ জয়েন', prize: 'প্রাইজ', refund: 'রিফান্ড', bonus: 'বোনাস', deduct: 'অ্যাডমিন কর্তন' };
+const STN = { pending: 'অপেক্ষমাণ', approved: 'সম্পন্ন', rejected: 'বাতিল' };
+function renderWallet() {
+  $('#wBal').textContent = tk(me.walletBalance);
+  $('#wTabs').innerHTML = [['add', 'টাকা অ্যাড'], ['wd', 'উইথড্র'], ['hist', 'হিস্টোরি']].map(([k, v]) => `<button class="${wTab === k ? 'on' : ''}" onclick="wTab='${k}';renderWallet()">${v}</button>`).join('');
+  const b = $('#wBody');
+  const ae = document.activeElement;
+  const keep = ae && ['INPUT', 'SELECT', 'TEXTAREA'].includes(ae.tagName) && ae.closest('#wBody');
+  if (keep) return; // ইউজার টাইপ করছে, ফর্ম রিসেট করব না
+  if (wTab === 'add') {
+    const pm = [['bKash', S.bkash], ['Nagad', S.nagad], ['Rocket', S.rocket]].filter(x => x[1]);
+    const min = Number(S.minDeposit) || 20;
+    if (S.depositEnabled === false) { b.innerHTML = '<div class="card empty">ডিপোজিট সাময়িকভাবে বন্ধ আছে</div>'; return; }
+    b.innerHTML = `<div class="card"><b>পেমেন্ট নম্বর (Send Money)</b><div style="margin-top:8px">${pm.length ? pm.map(([n, v]) => `<div class="pay"><span><b>${n}</b> &nbsp;${esc(v)}</span><button class="btn sm" onclick="copyTx('${esc(v)}')">কপি</button></div>`).join('') : '<div class="muted">অ্যাডমিন এখনো নম্বর সেট করেননি</div>'}</div>
+      ${S.depositNote ? `<div class="muted sm pre" style="margin-top:8px">${esc(S.depositNote)}</div>` : ''}</div>
+      <div class="card"><b>টাকা পাঠানোর পর তথ্য দিন</b>
+      <label class="fl">মাধ্যম</label><select id="dMethod" class="inp">${(pm.length ? pm : [['bKash'], ['Nagad'], ['Rocket']]).map(x => `<option>${x[0]}</option>`).join('')}</select>
+      <label class="fl">পরিমাণ (সর্বনিম্ন ${tk(min)})</label><input id="dAmt" class="inp" type="number" inputmode="numeric">
+      <label class="fl">যে নম্বর থেকে পাঠিয়েছেন</label><input id="dFrom" class="inp" type="tel" maxlength="11">
+      <label class="fl">Transaction ID (TrxID)</label><input id="dTrx" class="inp" maxlength="20" style="text-transform:uppercase">
+      <button class="btn pri block" id="dBtn" onclick="submitDeposit()">রিকোয়েস্ট পাঠান</button>
+      <p class="muted sm">অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবেন। ভুল TrxID দিলে রিকোয়েস্ট বাতিল হবে।</p></div>`;
+  } else if (wTab === 'wd') {
+    const min = Number(S.minWithdraw) || 50;
+    if (S.withdrawEnabled === false) { b.innerHTML = '<div class="card empty">উইথড্র সাময়িকভাবে বন্ধ আছে</div>'; return; }
+    b.innerHTML = `<div class="card"><b>উইথড্র রিকোয়েস্ট</b>
+      <label class="fl">মাধ্যম</label><select id="wMethod" class="inp"><option>bKash</option><option>Nagad</option><option>Rocket</option></select>
+      <label class="fl">আপনার নম্বর (Personal)</label><input id="wNum" class="inp" type="tel" maxlength="11" value="${esc(me.phone || '')}">
+      <label class="fl">পরিমাণ (সর্বনিম্ন ${tk(min)})</label><input id="wAmt" class="inp" type="number" inputmode="numeric">
+      <button class="btn pri block" id="wBtn" onclick="submitWithdraw()">উইথড্র রিকোয়েস্ট</button>
+      <p class="muted sm">রিকোয়েস্ট দিলে টাকা সাথে সাথে ব্যালেন্স থেকে কাটা হবে। বাতিল হলে ফেরত পাবেন।</p></div>`;
+  } else {
+    b.innerHTML = `<div class="card">${myTx.length ? myTx.map(x => {
+      const plus = PLUS.includes(x.type);
+      return `<div class="tx"><div class="ic">${TXI[x.type] || '💳'}</div><div class="mid"><div><b>${TXN[x.type] || esc(x.type)}</b> ${x.method ? '<small class="muted">(' + esc(x.method) + ')</small>' : ''}</div><div class="muted sm">${esc(x.note || x.trxId || '')}${x.adminNote ? ' • ' + esc(x.adminNote) : ''}</div><div class="muted sm">${fmtDT(x.createdAt)}</div></div>
+        <div style="text-align:right"><div class="${plus ? 'plus' : 'minus'}">${plus ? '+' : '-'}${tk(x.amount)}</div><span class="badge ${esc(x.status)}">${STN[x.status] || esc(x.status)}</span></div></div>`;
+    }).join('') : '<div class="empty">কোনো লেনদেন নেই</div>'}</div>`;
+  }
+}
+async function submitDeposit() {
+  const min = Number(S.minDeposit) || 20;
+  const method = $('#dMethod').value, amount = Number($('#dAmt').value), from = $('#dFrom').value.trim(), trx = $('#dTrx').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (!(amount >= min)) return toast('সর্বনিম্ন ডিপোজিট ' + tk(min), 1);
+  if (!/^01\d{9}$/.test(from)) return toast('সঠিক নম্বর দিন', 1);
+  if (trx.length < 6) return toast('সঠিক TrxID দিন', 1);
+  const btn = $('#dBtn'); btn.disabled = true;
+  try {
+    await db.collection('transactions').doc('dep_' + trx).set({ userId: uid, type: 'deposit', amount, method, senderNumber: from, trxId: trx, status: 'pending', createdAt: FV.serverTimestamp() });
+    toast('✅ রিকোয়েস্ট জমা হয়েছে, অ্যাডমিন যাচাই করবেন'); wTab = 'hist'; renderWallet();
+  } catch (e) { toast('জমা হয়নি। এই TrxID আগে ব্যবহার হয়ে থাকতে পারে।', 1); btn.disabled = false; }
+}
+async function submitWithdraw() {
+  const min = Number(S.minWithdraw) || 50;
+  const method = $('#wMethod').value, num = $('#wNum').value.trim(), amount = Number($('#wAmt').value);
+  if (me.isBanned) return toast('অ্যাকাউন্ট ব্যান', 1);
+  if (!/^01\d{9}$/.test(num)) return toast('সঠিক নম্বর দিন', 1);
+  if (!(amount >= min)) return toast('সর্বনিম্ন উইথড্র ' + tk(min), 1);
+  if (amount > (me.walletBalance || 0)) return toast('ব্যালেন্স যথেষ্ট নয়', 1);
+  const btn = $('#wBtn'); btn.disabled = true;
+  try {
+    const txId = 'wd_' + db.collection('x').doc().id;
+    const b = db.batch();
+    b.update(db.collection('users').doc(uid), { walletBalance: FV.increment(-amount), lastTx: txId });
+    b.set(db.collection('transactions').doc(txId), { userId: uid, type: 'withdraw', amount, method, number: num, status: 'pending', createdAt: FV.serverTimestamp() });
+    await b.commit();
+    toast('✅ উইথড্র রিকোয়েস্ট জমা হয়েছে'); wTab = 'hist'; renderWallet();
+  } catch (e) { toast('রিকোয়েস্ট ব্যর্থ, আবার চেষ্টা করুন', 1); btn.disabled = false; }
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfile() {
+  const kills = myJoined.reduce((a, j) => a + (Number(j.kills) || 0), 0), won = myJoined.reduce((a, j) => a + (Number(j.prize) || 0), 0);
+  const wa = S.supportWhatsapp ? 'https://wa.me/' + String(S.supportWhatsapp).replace(/\D/g, '') : '';
+  const links = [['💬 WhatsApp সাপোর্ট', wa], ['✈️ Telegram', safeUrl(S.supportTelegram)], ['📘 Facebook পেজ', safeUrl(S.supportFacebook)], ['📞 কল সাপোর্ট', S.supportPhone ? 'tel:' + String(S.supportPhone).replace(/[^\d+]/g, '') : '']].filter(x => x[1]);
+  $('#pBody').innerHTML = `<div class="card" style="text-align:center"><div class="avatar">${esc((me.name || '?').charAt(0).toUpperCase())}</div><b style="font-size:18px">${esc(me.name)}</b><div class="muted sm">${esc(me.email || '')}</div><div class="muted sm">${esc(me.phone || '')}</div>
+      <div class="stats" style="margin-top:12px"><div><small>ম্যাচ</small><b>${myJoined.length}</b></div><div><small>মোট কিল</small><b>${kills}</b></div><div><small>মোট জেতা</small><b>${tk(won)}</b></div></div></div>
+    <div class="card"><div class="kv"><span class="muted">Free Fire নাম</span><b>${esc(me.ffName || '-')}</b></div><div class="kv"><span class="muted">Free Fire UID</span><b>${esc(me.ffUid || '-')}</b></div>
+      <button class="btn block" onclick="editProfile()">✏️ প্রোফাইল এডিট</button></div>
+    <div class="card">
+      <div class="menu" onclick="mTab='mine';go('match');renderMatch()"><span>🎯 আমার ম্যাচ</span><span>›</span></div>
+      <div class="menu" onclick="wTab='hist';go('wallet');renderWallet()"><span>🧾 লেনদেনের হিস্টোরি</span><span>›</span></div>
+      ${links.map(([n, u]) => `<a class="menu" style="color:inherit;text-decoration:none" href="${esc(u)}" target="_blank" rel="noopener"><span>${n}</span><span>›</span></a>`).join('')}
+      <div class="menu" onclick="showRules()"><span>📜 নিয়ম ও শর্তাবলী</span><span>›</span></div>
+      <div class="menu" onclick="changePass()"><span>🔑 পাসওয়ার্ড পরিবর্তন</span><span>›</span></div>
+      <div class="menu" onclick="auth.signOut()"><span class="minus">🚪 লগআউট</span><span>›</span></div>
+    </div>
+    <div class="muted sm" style="text-align:center">BG ZONE v1.0</div>`;
+}
+function editProfile() {
+  openModal(`<h3>প্রোফাইল এডিট</h3>
+    <label class="fl">নাম</label><input id="eName" class="inp" maxlength="40" value="${esc(me.name)}">
+    <label class="fl">Free Fire ইন-গেম নাম</label><input id="eFf" class="inp" maxlength="40" value="${esc(me.ffName || '')}">
+    <label class="fl">Free Fire UID</label><input id="eUid" class="inp" inputmode="numeric" maxlength="20" value="${esc(me.ffUid || '')}">
+    <button class="btn pri block" onclick="saveProfile()">সেভ করুন</button><button class="btn block" onclick="closeModal()">বাতিল</button>`);
+}
+async function saveProfile() {
+  const name = $('#eName').value.trim(), ffName = $('#eFf').value.trim(), ffUid = $('#eUid').value.trim();
+  if (name.length < 2 || !ffName || !/^\d{5,20}$/.test(ffUid)) return toast('সব তথ্য সঠিকভাবে দিন', 1);
+  try { await db.collection('users').doc(uid).update({ name, ffName, ffUid }); closeModal(); toast('সেভ হয়েছে ✅'); } catch (e) { toast('সেভ হয়নি', 1); }
+}
+function showRules() {
+  openModal(`<h3>📜 নিয়ম ও শর্তাবলী</h3><div class="pre sm">${esc(S.rules || '১. ১৮ বছরের নিচে কেউ অংশ নিতে পারবে না।\n২. হ্যাক/চিট/ইমুলেটর ব্যবহার করলে স্থায়ী ব্যান ও টাকা বাজেয়াপ্ত।\n৩. ভুল Free Fire UID/নামের জন্য অ্যাডমিন দায়ী নয়।\n৪. রুম ID/Password কারো সাথে শেয়ার করা যাবে না।\n৫. অ্যাডমিনের সিদ্ধান্তই চূড়ান্ত।\n৬. জয়েন করার পর ম্যাচ বাতিল না হলে এন্ট্রি ফি ফেরত দেওয়া হয় না।')}</div><button class="btn block" onclick="closeModal()">বন্ধ করুন</button>`);
+}
+function changePass() {
+  openModal(`<h3>পাসওয়ার্ড পরিবর্তন</h3>
+    <label class="fl">বর্তমান পাসওয়ার্ড</label><input id="cpOld" class="inp" type="password">
+    <label class="fl">নতুন পাসওয়ার্ড</label><input id="cpNew" class="inp" type="password">
+    <button class="btn pri block" onclick="doChangePass()">পরিবর্তন করুন</button><button class="btn block" onclick="closeModal()">বাতিল</button>`);
+}
+async function doChangePass() {
+  const o = $('#cpOld').value, n = $('#cpNew').value;
+  if (n.length < 6) return toast('নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষর', 1);
+  try {
+    const u = auth.currentUser;
+    await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, o));
+    await u.updatePassword(n); closeModal(); toast('পাসওয়ার্ড পরিবর্তন হয়েছে ✅');
+  } catch (e) { toast(authErr(e), 1); }
+}
+</script>
+</body>
+</html>
